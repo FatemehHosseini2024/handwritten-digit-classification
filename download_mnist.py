@@ -1,3 +1,5 @@
+import torch
+from torch.utils.data import random_split
 import torchvision
 from torchvision import datasets, transforms
 
@@ -11,8 +13,15 @@ transform = transforms.Compose([
 train_set = datasets.MNIST(root=DATA_DIR, train=True, download=True, transform=transform)
 test_set = datasets.MNIST(root=DATA_DIR, train=False, download=True, transform=transform)
 
+# Train / validation split (random)
+val_size = 5000
+train_size = len(train_set) - val_size
+train_subset, val_subset = random_split(train_set, [train_size, val_size])
+
 print(f"Train set: {len(train_set)} samples")
 print(f"Test set: {len(test_set)} samples")
+print(f"Train subset: {len(train_subset)} samples")
+print(f"Validation subset: {len(val_subset)} samples")
 
 image, label = train_set[0]
 print(f"Label: {label}")
