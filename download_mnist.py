@@ -33,6 +33,14 @@ print(f"Train loader batches: {len(train_loader)}")
 print(f"Validation loader batches: {len(val_loader)}")
 print(f"Test loader batches: {len(test_loader)}")
 
+# Flatten images and show shapes before/after
+for name, loader in [("Train", train_loader), ("Validation", val_loader), ("Test", test_loader)]:
+    images, labels = next(iter(loader))
+    print(f"\n{name} batch:")
+    print(f"  Before flatten: {images.shape}")
+    flattened = images.view(images.size(0), -1)
+    print(f"  After flatten:  {flattened.shape}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
