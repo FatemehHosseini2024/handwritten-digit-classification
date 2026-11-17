@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import random_split
+from torch.utils.data import random_split, DataLoader
 import torchvision
 from torchvision import datasets, transforms
 
@@ -22,6 +22,16 @@ print(f"Train set: {len(train_set)} samples")
 print(f"Test set: {len(test_set)} samples")
 print(f"Train subset: {len(train_subset)} samples")
 print(f"Validation subset: {len(val_subset)} samples")
+
+# DataLoaders
+BATCH_SIZE = 64
+train_loader = DataLoader(train_subset, batch_size=BATCH_SIZE, shuffle=True)
+val_loader = DataLoader(val_subset, batch_size=BATCH_SIZE, shuffle=False)
+test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=False)
+
+print(f"Train loader batches: {len(train_loader)}")
+print(f"Validation loader batches: {len(val_loader)}")
+print(f"Test loader batches: {len(test_loader)}")
 
 image, label = train_set[0]
 print(f"Label: {label}")
