@@ -1,0 +1,36 @@
+import torchvision
+from torchvision import datasets, transforms
+
+DATA_DIR = "data"
+
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+
+train_set = datasets.MNIST(root=DATA_DIR, train=True, download=True, transform=transform)
+test_set = datasets.MNIST(root=DATA_DIR, train=False, download=True, transform=transform)
+
+print(f"Train set: {len(train_set)} samples")
+print(f"Test set: {len(test_set)} samples")
+
+image, label = train_set[0]
+print(f"Label: {label}")
+print(f"Label type: {type(label)}")
+print(f"Image type: {type(image)}")
+print(f"Image shape: {image.shape}")
+print(f"Image ndim: {image.ndim}")
+print(f"Image dtype: {image.dtype}")
+print(f"Image min: {image.min().item()}")
+print(f"Image max: {image.max().item()}")
+
+import matplotlib.pyplot as plt
+
+# Convert from [1, 28, 28] to [28, 28] for display
+img_np = image.squeeze().numpy()
+plt.figure(figsize=(4, 4))
+plt.imshow(img_np, cmap='gray')
+plt.title(f"Label: {label}")
+plt.axis('off')
+plt.savefig("mnist_first_sample.png", bbox_inches='tight', dpi=150)
+print(f"Saved image to mnist_first_sample.png")
