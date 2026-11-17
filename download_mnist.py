@@ -64,6 +64,13 @@ for name, loader in [("Train", train_loader), ("Validation", val_loader), ("Test
 model = MNISTNet()
 print(f"\nModel:\n{model}")
 
+# Parameter info
+total_params = sum(p.numel() for p in model.parameters())
+print(f"\nTotal parameters: {total_params:,}")
+print("\nParameter names and shapes:")
+for name, param in model.named_parameters():
+    print(f"  {name}: {tuple(param.shape)}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
