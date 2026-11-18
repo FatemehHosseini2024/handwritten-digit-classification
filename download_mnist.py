@@ -415,3 +415,36 @@ else:
             plt.title("Cropped Digit")
             plt.axis('off')
             plt.show()
+
+            # 4. Resizing & Centering (MNIST format: digit ~20x20 centered in 28x28)
+            # Preserve aspect ratio: resize so longest side fits in 20px
+            h, w = cropped.shape
+            if h > w:
+                new_h = 20
+                new_w = int(w * 20 / h)
+            else:
+                new_w = 20
+                new_h = int(h * 20 / w)
+
+            resized = cv2.resize(cropped, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+            # Create 28x28 canvas with black background
+            canvas = np.zeros((28, 28), dtype=np.uint8)
+
+            # Center the resized digit
+            y_offset = (28 - new_h) // 2
+            x_offset = (28 - new_w) // 2
+            canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized
+
+            print(f"\nResizing & Centering")
+            print(f"Original cropped size: {w} x {h}")
+            print(f"Resized digit size: {new_w} x {new_h}")
+            print(f"Final canvas size: 28 x 28")
+            print(f"Padding: top={y_offset}, left={x_offset}")
+
+            # Display resized & centered image
+            plt.figure(figsize=(4, 4))
+            plt.imshow(canvas, cmap='gray')
+            plt.title("Resized & Centered (28x28)")
+            plt.axis('off')
+            plt.show()
