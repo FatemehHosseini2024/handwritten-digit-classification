@@ -466,3 +466,18 @@ else:
             print(f"Tensor dtype: {tensor.dtype}")
             print(f"Tensor min: {tensor.min().item():.4f}")
             print(f"Tensor max: {tensor.max().item():.4f}")
+
+            # 6. Model Inference
+            # Load the saved model
+            inference_model = MNISTNet()
+            inference_model.load_state_dict(torch.load("best_mnist_model.pth"))
+            inference_model.eval()
+
+            with torch.no_grad():
+                logits = inference_model(tensor)
+
+            predicted_digit = logits.argmax(dim=1).item()
+
+            print(f"\nModel Inference")
+            print(f"Logits: {logits.squeeze().tolist()}")
+            print(f"Predicted Digit: {predicted_digit}")
