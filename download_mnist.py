@@ -273,9 +273,30 @@ for i in range(10):
     print(f"  Class {i}: Precision={precision[i]:.4f}, Recall={recall[i]:.4f}, F1={f1[i]:.4f}, Support={support[i]}")
 
 # Macro and Weighted averages
-for avg in ['macro', 'weighted']:
-    p, r, f, _ = precision_recall_fscore_support(all_labels, all_preds, average=avg)
-    print(f"\n{avg.capitalize()} Average: Precision={p:.4f}, Recall={r:.4f}, F1={f:.4f}")
+macro_p, macro_r, macro_f, _ = precision_recall_fscore_support(all_labels, all_preds, average='macro')
+weighted_p, weighted_r, weighted_f, _ = precision_recall_fscore_support(all_labels, all_preds, average='weighted')
+
+print(f"\nMacro Average: Precision={macro_p:.4f}, Recall={macro_r:.4f}, F1={macro_f:.4f}")
+print(f"Weighted Average: Precision={weighted_p:.4f}, Recall={weighted_r:.4f}, F1={weighted_f:.4f}")
+
+# Confusion Matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(all_labels, all_preds)
+print("\nConfusion Matrix:")
+print(cm)
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=range(10), yticklabels=range(10))
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix - MNIST Test Set')
+plt.tight_layout()
+plt.savefig("confusion_matrix.png", dpi=150)
+print("Saved confusion matrix to confusion_matrix.png")
 
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
