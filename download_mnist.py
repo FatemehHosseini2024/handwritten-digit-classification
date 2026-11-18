@@ -354,3 +354,37 @@ else:
         plt.title("Original Image")
         plt.axis('off')
         plt.show()
+
+        # 2.1. Grayscale Conversion
+        gray = img.convert('L')
+        print(f"\nGrayscale Image")
+        print(f"Image Width and Height: {gray.width} x {gray.height}")
+        print(f"Image Mode: {gray.mode}")
+        print(f"Number of channels: {len(gray.getbands())}")
+
+        # Display grayscale image
+        plt.figure(figsize=(4, 4))
+        plt.imshow(gray, cmap='gray')
+        plt.title("Grayscale Image")
+        plt.axis('off')
+        plt.show()
+
+        # 2.2. Thresholding (Otsu) + 2.3. Inversion
+        import cv2
+        import numpy as np
+        gray_np = np.array(gray)
+        # Otsu's thresholding
+        _, thresh = cv2.threshold(gray_np, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        # Inversion: MNIST has dark background, light digit
+        inverted = cv2.bitwise_not(thresh)
+
+        print(f"\nThresholded & Inverted Image")
+        print(f"Image Width and Height: {inverted.shape[1]} x {inverted.shape[0]}")
+        print(f"Number of channels: 1")
+
+        # Display thresholded and inverted image
+        plt.figure(figsize=(4, 4))
+        plt.imshow(inverted, cmap='gray')
+        plt.title("Thresholded & Inverted Image")
+        plt.axis('off')
+        plt.show()
