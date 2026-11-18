@@ -156,11 +156,16 @@ print(f"  Loss after update:  {loss_after:.6f}")
 print(f"  fc1.weight changed: {fc1_weight_changed}")
 print(f"  fc3.weight changed: {fc3_weight_changed}")
 
-# Training loop: 15 epochs
+# Training loop: 15 epochs with early stopping
 EPOCHS = 15
+PATIENCE = 3
 train_losses = []
 val_losses = []
 val_accuracies = []
+
+best_val_loss = float('inf')
+patience_counter = 0
+best_model_state = None
 
 for epoch in range(EPOCHS):
     # Training
@@ -204,6 +209,24 @@ for epoch in range(EPOCHS):
           f"Train Loss: {avg_train_loss:.6f} - "
           f"Val Loss: {avg_val_loss:.6f} - "
           f"Val Accuracy: {val_accuracy:.2f}%")
+
+    # Early stopping
+    if avg_val_loss < best_val_loss:
+        best_val_loss = avg_val_loss
+        patience_counter = 0
+        best_model_state = {k: v.clone() for k, v in model.state_dict().items()}
+        print(f"  -> Validation loss improved. Model saved.")
+    else:
+        patience_counter += 1
+        print(f"  -> No improvement. Patience: {patience_counter}/{PATIENCE}")
+        if patience_counter >= PATIENCE:
+            print(f"\nEarly stopping triggered at epoch {epoch+1}.")
+            break
+
+# Restore best model
+if best_model_state is not None:
+    model.load_state_dict(best_model_state)
+    print(f"\nBest model restored (best val loss: {best_val_loss:.6f}).")
 
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
