@@ -159,8 +159,11 @@ print(f"  fc3.weight changed: {fc3_weight_changed}")
 # Training loop: 15 epochs
 EPOCHS = 15
 train_losses = []
+val_losses = []
+val_accuracies = []
 
 for epoch in range(EPOCHS):
+    # Training
     model.train()
     epoch_loss = 0.0
 
@@ -171,14 +174,41 @@ for epoch in range(EPOCHS):
         loss_batch = criterion(output_batch, batch_labels)
         loss_batch.backward()
         optimizer.step()
-        epoch_loss += loss_batch.item()
+        epoch_loss += loss_batch.item() * batch_images.size(0)
 
-    avg_epoch_loss = epoch_loss / len(train_loader)
-    train_losses.append(avg_epoch_loss)
-    print(f"Epoch [{epoch+1}/{EPOCHS}] - Average Train Loss: {avg_epoch_loss:.6f}")
+    avg_train_loss = epoch_loss / len(train_subset)
+    train_losses.append(avg_train_loss)
+
+    # Validation
+    model.eval()
+    val_loss = 0.0
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for val_images, val_labels in val_loader:
+            flattened_val = val_images.view(val_images.size(0), -1)
+            val_output = model(flattened_val)
+            v_loss = criterion(val_output, val_labels)
+            val_loss += v_loss.item() * val_images.size(0)
+            _, predicted = torch.max(val_output, 1)
+            correct += (predicted == val_labels).sum().item()
+            total += val_labels.size(0)
+
+    avg_val_loss = val_loss / total
+    val_accuracy = correct / total * 100
+    val_losses.append(avg_val_loss)
+    val_accuracies.append(val_accuracy)
+
+    print(f"Epoch [{epoch+1}/{EPOCHS}] - "
+          f"Train Loss: {avg_train_loss:.6f} - "
+          f"Val Loss: {avg_val_loss:.6f} - "
+          f"Val Accuracy: {val_accuracy:.2f}%")
 
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
-print(f"Final epoch loss: {train_losses[-1]:.6f}")
+print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
+      f"Val Loss: {val_losses[-1]:.6f}, "
+      f"Val Accuracy: {val_accuracies[-1]:.2f}%")
 
 image, label = train_set[0]
 print(f"Label: {label}")
