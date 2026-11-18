@@ -388,3 +388,30 @@ else:
         plt.title("Thresholded & Inverted Image")
         plt.axis('off')
         plt.show()
+
+        # 3. Digit Detection & Cropping
+        # Find contours
+        contours, _ = cv2.findContours(inverted, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if len(contours) == 0:
+            print("No contours found. Cannot crop digit.")
+        else:
+            # Get the largest contour (single digit assumption)
+            largest_contour = max(contours, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(largest_contour)
+
+            print(f"\nDigit Detection & Cropping")
+            print(f"Bounding box: x={x}, y={y}, width={w}, height={h}")
+            print(f"Number of contours found: {len(contours)}")
+
+            # Crop the digit from the inverted image
+            cropped = inverted[y:y+h, x:x+w]
+
+            print(f"Cropped image size: {cropped.shape[1]} x {cropped.shape[0]}")
+
+            # Display cropped digit
+            plt.figure(figsize=(4, 4))
+            plt.imshow(cropped, cmap='gray')
+            plt.title("Cropped Digit")
+            plt.axis('off')
+            plt.show()
