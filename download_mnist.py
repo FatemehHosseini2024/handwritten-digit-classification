@@ -249,6 +249,34 @@ def evaluate(model, test_loader):
 test_accuracy = evaluate(model, test_loader)
 print(f"\nTest Accuracy: {test_accuracy:.2f}%")
 
+# Collect predictions and true labels for metrics
+all_preds = []
+all_labels = []
+model.eval()
+with torch.no_grad():
+    for test_images, test_labels in test_loader:
+        flattened_test = test_images.view(test_images.size(0), -1)
+        test_output = model(flattened_test)
+        _, predicted = torch.max(test_output, 1)
+        all_preds.extend(predicted.cpu().numpy())
+        all_labels.extend(test_labels.cpu().numpy())
+
+from sklearn.metrics import classification_report, precision_recall_fscore_support
+
+print("\nClassification Report:")
+print(classification_report(all_labels, all_preds, digits=4))
+
+# Per-class metrics
+precision, recall, f1, support = precision_recall_fscore_support(all_labels, all_preds, average=None)
+print("Per-class metrics:")
+for i in range(10):
+    print(f"  Class {i}: Precision={precision[i]:.4f}, Recall={recall[i]:.4f}, F1={f1[i]:.4f}, Support={support[i]}")
+
+# Macro and Weighted averages
+for avg in ['macro', 'weighted']:
+    p, r, f, _ = precision_recall_fscore_support(all_labels, all_preds, average=avg)
+    print(f"\n{avg.capitalize()} Average: Precision={p:.4f}, Recall={r:.4f}, F1={f:.4f}")
+
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
       f"Val Loss: {val_losses[-1]:.6f}, "
