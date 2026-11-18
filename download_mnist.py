@@ -85,6 +85,12 @@ print(f"\nOutput for first image (10 logits):")
 print(output[0])
 print(f"Number of logits: {output[0].numel()}")
 
+# Predicted vs actual label for first image
+predicted_label = output[0].argmax().item()
+actual_label = labels[0].item()
+print(f"\nPredicted label (argmax): {predicted_label}")
+print(f"Actual label: {actual_label}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
