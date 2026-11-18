@@ -228,6 +228,10 @@ if best_model_state is not None:
     model.load_state_dict(best_model_state)
     print(f"\nBest model restored (best val loss: {best_val_loss:.6f}).")
 
+# Save the best model permanently
+torch.save(model.state_dict(), "best_mnist_model.pth")
+print(f"Best model saved to best_mnist_model.pth")
+
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
       f"Val Loss: {val_losses[-1]:.6f}, "
