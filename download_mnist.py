@@ -91,6 +91,12 @@ actual_label = labels[0].item()
 print(f"\nPredicted label (argmax): {predicted_label}")
 print(f"Actual label: {actual_label}")
 
+# Batch accuracy
+predictions = output.argmax(dim=1)
+correct = (predictions == labels).sum().item()
+accuracy = correct / labels.size(0) * 100
+print(f"\nBatch accuracy: {correct}/{labels.size(0)} = {accuracy:.2f}%")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
