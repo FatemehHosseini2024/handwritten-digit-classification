@@ -228,9 +228,26 @@ if best_model_state is not None:
     model.load_state_dict(best_model_state)
     print(f"\nBest model restored (best val loss: {best_val_loss:.6f}).")
 
-# Save the best model permanently
-torch.save(model.state_dict(), "best_mnist_model.pth")
-print(f"Best model saved to best_mnist_model.pth")
+# Load the saved model
+model.load_state_dict(torch.load("best_mnist_model.pth"))
+print("Best model loaded from best_mnist_model.pth")
+
+# Evaluate on test set
+def evaluate(model, test_loader):
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for test_images, test_labels in test_loader:
+            flattened_test = test_images.view(test_images.size(0), -1)
+            test_output = model(flattened_test)
+            _, predicted = torch.max(test_output, 1)
+            correct += (predicted == test_labels).sum().item()
+            total += test_labels.size(0)
+    return correct / total * 100
+
+test_accuracy = evaluate(model, test_loader)
+print(f"\nTest Accuracy: {test_accuracy:.2f}%")
 
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
