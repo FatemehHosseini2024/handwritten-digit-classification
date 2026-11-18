@@ -105,6 +105,25 @@ print(f"Loss type: {type(loss)}")
 print(f"Loss is scalar: {loss.dim() == 0}")
 print(f"Loss value positive: {loss.item() > 0}")
 
+# Training step: gradients
+model.train()
+model.zero_grad()
+
+images_batch, labels_batch = next(iter(train_loader))
+flattened_batch = images_batch.view(images_batch.size(0), -1)
+output_batch = model(flattened_batch)
+loss_batch = criterion(output_batch, labels_batch)
+loss_batch.backward()
+
+print(f"\nGradient checks after backward():")
+for name, param in model.named_parameters():
+    grad = param.grad
+    print(f"  {name}.grad is not None: {grad is not None}")
+    print(f"  {name}.grad shape: {tuple(grad.shape)} (param shape: {tuple(param.shape)})")
+    print(f"  {name}.grad matches param shape: {grad.shape == param.shape}")
+    print(f"  {name}.grad sample values: {grad.flatten()[:5].tolist()}")
+    print()
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
