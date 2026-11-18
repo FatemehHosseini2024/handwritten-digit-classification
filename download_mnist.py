@@ -448,3 +448,21 @@ else:
             plt.title("Resized & Centered (28x28)")
             plt.axis('off')
             plt.show()
+
+            # 5. Tensor Conversion & Normalization
+            import torch
+            from torchvision import transforms
+
+            # Convert to tensor and scale to [0, 1]
+            tensor = transforms.ToTensor()(Image.fromarray(canvas))
+            # Apply same normalization as training
+            normalize = transforms.Normalize((0.1307,), (0.3081,))
+            tensor = normalize(tensor)
+            # Add batch dimension: [1, 1, 28, 28]
+            tensor = tensor.unsqueeze(0)
+
+            print(f"\nTensor Conversion & Normalization")
+            print(f"Tensor shape: {tensor.shape}")
+            print(f"Tensor dtype: {tensor.dtype}")
+            print(f"Tensor min: {tensor.min().item():.4f}")
+            print(f"Tensor max: {tensor.max().item():.4f}")
