@@ -156,6 +156,30 @@ print(f"  Loss after update:  {loss_after:.6f}")
 print(f"  fc1.weight changed: {fc1_weight_changed}")
 print(f"  fc3.weight changed: {fc3_weight_changed}")
 
+# Training loop: 15 epochs
+EPOCHS = 15
+train_losses = []
+
+for epoch in range(EPOCHS):
+    model.train()
+    epoch_loss = 0.0
+
+    for batch_images, batch_labels in train_loader:
+        optimizer.zero_grad()
+        flattened_batch = batch_images.view(batch_images.size(0), -1)
+        output_batch = model(flattened_batch)
+        loss_batch = criterion(output_batch, batch_labels)
+        loss_batch.backward()
+        optimizer.step()
+        epoch_loss += loss_batch.item()
+
+    avg_epoch_loss = epoch_loss / len(train_loader)
+    train_losses.append(avg_epoch_loss)
+    print(f"Epoch [{epoch+1}/{EPOCHS}] - Average Train Loss: {avg_epoch_loss:.6f}")
+
+print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
+print(f"Final epoch loss: {train_losses[-1]:.6f}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
