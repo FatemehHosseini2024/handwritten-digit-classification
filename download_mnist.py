@@ -124,6 +124,38 @@ for name, param in model.named_parameters():
     print(f"  {name}.grad sample values: {grad.flatten()[:5].tolist()}")
     print()
 
+# Adam optimizer update
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# Capture loss before update
+loss_before = loss_batch.item()
+
+# Capture a sample of weights before update
+fc1_weight_before = model.fc1.weight.data.clone()
+fc3_weight_before = model.fc3.weight.data.clone()
+
+# Zero gradients, forward, loss, backward, step
+optimizer.zero_grad()
+images_batch, labels_batch = next(iter(train_loader))
+flattened_batch = images_batch.view(images_batch.size(0), -1)
+output_batch = model(flattened_batch)
+loss_batch = criterion(output_batch, labels_batch)
+loss_batch.backward()
+optimizer.step()
+
+# Capture loss after update
+loss_after = loss_batch.item()
+
+# Check if weights changed
+fc1_weight_changed = not torch.equal(fc1_weight_before, model.fc1.weight.data)
+fc3_weight_changed = not torch.equal(fc3_weight_before, model.fc3.weight.data)
+
+print(f"\nOptimizer weight update:")
+print(f"  Loss before update: {loss_before:.6f}")
+print(f"  Loss after update:  {loss_after:.6f}")
+print(f"  fc1.weight changed: {fc1_weight_changed}")
+print(f"  fc3.weight changed: {fc3_weight_changed}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
