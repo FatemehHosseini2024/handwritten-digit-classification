@@ -298,6 +298,19 @@ plt.tight_layout()
 plt.savefig("confusion_matrix.png", dpi=150)
 print("Saved confusion matrix to confusion_matrix.png")
 
+# Plot train and validation loss
+plt.figure(figsize=(8, 5))
+plt.plot(range(1, len(train_losses) + 1), train_losses, label='Train Loss', marker='o')
+plt.plot(range(1, len(val_losses) + 1), val_losses, label='Validation Loss', marker='s')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Train Loss vs Validation Loss')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("loss_curve.png", dpi=150)
+print("Saved loss curve to loss_curve.png")
+
 print(f"\nTraining complete. Recorded {len(train_losses)} epoch losses.")
 print(f"Final epoch - Train Loss: {train_losses[-1]:.6f}, "
       f"Val Loss: {val_losses[-1]:.6f}, "
@@ -314,12 +327,30 @@ print(f"Image min: {image.min().item()}")
 print(f"Image max: {image.max().item()}")
 
 import matplotlib.pyplot as plt
+from PIL import Image
+import os
 
-# Convert from [1, 28, 28] to [28, 28] for display
-img_np = image.squeeze().numpy()
-plt.figure(figsize=(4, 4))
-plt.imshow(img_np, cmap='gray')
-plt.title(f"Label: {label}")
-plt.axis('off')
-plt.savefig("mnist_first_sample.png", bbox_inches='tight', dpi=150)
-print(f"Saved image to mnist_first_sample.png")
+# Receive an external image from the user
+image_path = input("Enter the path to your image: ")
+
+# Check that the file exists and is readable
+if not os.path.exists(image_path):
+    print(f"Error: File does not exist: {image_path}")
+else:
+    try:
+        img = Image.open(image_path)
+        img.load()  # Force load to check readability
+    except Exception as e:
+        print(f"Error: Cannot read image file: {e}")
+    else:
+        print(f"Original Image")
+        print(f"Image Width and Height: {img.width} x {img.height}")
+        print(f"Image Mode: {img.mode}")
+        print(f"Number of channels: {len(img.getbands())}")
+
+        # Display the original image
+        plt.figure(figsize=(4, 4))
+        plt.imshow(img)
+        plt.title("Original Image")
+        plt.axis('off')
+        plt.show()
