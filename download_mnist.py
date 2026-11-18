@@ -71,6 +71,20 @@ print("\nParameter names and shapes:")
 for name, param in model.named_parameters():
     print(f"  {name}: {tuple(param.shape)}")
 
+# Forward pass on a training batch
+images, labels = next(iter(train_loader))
+flattened = images.view(images.size(0), -1)
+input_t = flattened.t()
+output = model(flattened)
+output_t = output.t()
+
+print(f"\nForward pass on train batch:")
+print(f"  Input shape:  {tuple(input_t.shape)}")
+print(f"  Output shape: {tuple(output_t.shape)}")
+print(f"\nOutput for first image (10 logits):")
+print(output[0])
+print(f"Number of logits: {output[0].numel()}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
