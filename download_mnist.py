@@ -97,6 +97,14 @@ correct = (predictions == labels).sum().item()
 accuracy = correct / labels.size(0) * 100
 print(f"\nBatch accuracy: {correct}/{labels.size(0)} = {accuracy:.2f}%")
 
+# CrossEntropyLoss
+criterion = nn.CrossEntropyLoss()
+loss = criterion(output, labels)
+print(f"\nLoss: {loss}")
+print(f"Loss type: {type(loss)}")
+print(f"Loss is scalar: {loss.dim() == 0}")
+print(f"Loss value positive: {loss.item() > 0}")
+
 image, label = train_set[0]
 print(f"Label: {label}")
 print(f"Label type: {type(label)}")
